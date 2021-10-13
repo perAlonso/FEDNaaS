@@ -12,7 +12,6 @@ apt:
       keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
 packages:
   - docker-ce
-  - docker-cli
   - docker-compose
   - git
 byobu_default: system
@@ -32,7 +31,7 @@ write_files:
           working_dir: /app/client
           command: sh -c "mkdir -p /app/client/certs && fedn run reducer -n reducer  --init=./config/settings-reducer.yaml"
           volumes:
-            - $${PWD}/config:/app/client/config
+            - /home/ubuntu/config:/app/client/config
           ports:
             - 8090:8090
   - path: /home/ubuntu/private-network.yaml
@@ -43,10 +42,83 @@ write_files:
           external:
             name: fedn_default
   - path: /home/ubuntu/base-services.yaml
-    
+    content: |
+      version: '3.3'
+      services:
+        minio:
+          image: minio/minio:latest
+          hostname: minio
+          environment:
+            - GET_HOSTS_FROM=dns
+            - MINIO_HOST=minio
+            - MINIO_PORT=9000
+            - MINIO_ROOT_USER=fedn_admin
+            - MINIO_ROOT_PASSWORD=ieojf3faw4a3
+          command: server /data --console-address minio:9091
+          healthcheck:
+            test: ["CMD", "curl", "-f", "http://minio:9000/minio/health/live"]
+
+        mongo:
+          image: mongo:latest
+          restart: always
+          environment:
+            - MONGO_INITDB_ROOT_USERNAME=fedn_admin
+            - MONGO_INITDB_ROOT_PASSWORD=owr3fwoja09oj
+          ports:
+            - 6534:6534
+          command: mongod --port 6534
+            
+        mongo-express:
+          image: mongo-express:latest
+          restart: always
+          environment:
+            - ME_CONFIG_MONGODB_SERVER=mongo
+            - ME_CONFIG_MONGODB_PORT=6534
+            - ME_CONFIG_MONGODB_ADMINUSERNAME=fedn_admin
+            - ME_CONFIG_MONGODB_ADMINPASSWORD=owr3fwoja09oj
+            - ME_CONFIG_BASICAUTH_USERNAME=fedn_admin
+            - ME_CONFIG_BASICAUTH_PASSWORD=iaw3rf8he9oa3
+          ports:
+            - 8081:8081
+
+  - path: /home/ubuntu/config/extra-hosts-reducer.yaml
+    content: |
+      version: '3.3'
+      services:
+        reducer:
+          extra_hosts:
+            combiner1: ${COMBINER1}
+            combiner2: ${COMBINER2}
+  - path: /home/ubuntu/config/settings-reducer.yaml
+    content: |
+      network_id: fedn-test-network
+      control:
+        state: idle
+        helper: keras
+      statestore:
+        type: MongoDB
+        mongo_config:
+          username: fedn_admin
+          password: owr3fwoja09oj
+          host: mongo
+          port: 6534
+
+      storage:
+        storage_type: S3
+        storage_config:
+          storage_hostname: minio
+          storage_port: 9000
+          storage_access_key: fedn_admin
+          storage_secret_key: ieojf3faw4a3
+          storage_bucket: fedn-models
+          context_bucket: fedn-context
+          storage_secure_mode: False
 
 runcmd:
- - git clone https://github.com/scaleoutsystems/fedn.git
+ - sudo usermod -aG docker ubuntu 
  - sudo systemctl start docker
  - sudo systemctl enable docker
- - docker run -d hello-world
+ - git clone https://github.com/scaleoutsystems/fedn.git
+ - docker network create fedn_default
+ - docker-compose -f /home/ubuntu/base-services.yaml -f /home/ubuntu/private-network.yaml up -d
+ - docker-compose -f /home/ubuntu/reducer.yaml -f /home/ubuntu/private-network.yaml up -d
