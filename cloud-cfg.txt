@@ -1,0 +1,52 @@
+#cloud-config
+
+groups:
+  - docker:
+      - ubuntu
+apt_update: true
+apt_upgrade: false
+apt:
+  sources:
+    docker:
+      source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+packages:
+  - docker-ce
+  - docker-cli
+  - docker-compose
+  - git
+byobu_default: system
+
+write_files:
+  - path: /home/ubuntu/reducer.yaml
+    content: |
+      version: '3.3'
+
+      services:
+        reducer:
+          environment:
+            - GET_HOSTS_FROM=dns
+            - USER=test
+            - PROJECT=project
+          image: "scaleoutsystems/fedn-reducer:master"
+          working_dir: /app/client
+          command: sh -c "mkdir -p /app/client/certs && fedn run reducer -n reducer  --init=./config/settings-reducer.yaml"
+          volumes:
+            - $${PWD}/config:/app/client/config
+          ports:
+            - 8090:8090
+  - path: /home/ubuntu/private-network.yaml
+    content: |
+      version: '3.3'
+      networks:
+        default:
+          external:
+            name: fedn_default
+  - path: /home/ubuntu/base-services.yaml
+    
+
+runcmd:
+ - git clone https://github.com/scaleoutsystems/fedn.git
+ - sudo systemctl start docker
+ - sudo systemctl enable docker
+ - docker run -d hello-world
