@@ -1,3 +1,5 @@
-output "floating-ip" {
-  value = openstack_networking_floatingip_v2.combiner.address
+output "combiner-fip" {
+  description = "The floating IP of the combiner instance"
+  value = module.combiner.floating-ip
 }
+

@@ -7,8 +7,12 @@ packages:
   - docker-compose
   - git-lfs
 
+fqdn: combiner
+
 runcmd:
+  - cd /home/ubuntu/
   - git clone https://github.com/scaleoutsystems/fedn.git
   - cd fedn/
   - cp config/settings-combiner.yaml.template config/settings-combiner.yaml
-  - screen -S combiner docker-compose -f config/combiner.yaml up
+  - cp config/combiner.yaml docker-compose.yaml
+  - docker-compose up
