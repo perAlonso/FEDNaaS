@@ -48,6 +48,8 @@ write_files:
         minio:
           image: minio/minio:latest
           hostname: minio
+          volumes:
+            - /home/ubuntu/minio-vol:/data
           environment:
             - GET_HOSTS_FROM=dns
             - MINIO_HOST=minio
