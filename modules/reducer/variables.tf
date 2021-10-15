@@ -17,3 +17,8 @@ variable uuid {
   description = "UUID of network to use"
   type = string
 }
+
+variable combiner_ips {
+  description = "List IP addresses of combiners"
+  type = list(string)
+}

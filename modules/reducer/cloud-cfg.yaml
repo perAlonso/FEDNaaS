@@ -89,8 +89,8 @@ write_files:
       services:
         reducer:
           extra_hosts:
-            %{ for host in reducer_extra_hosts ~}
-            combiner${index(reducer_extra_hosts, host)}: ${host}
+            %{ for host in combiner_ips ~}
+            combiner${index(combiner_ips, host)}: ${host}
             %{ endfor ~}
   - path: /home/ubuntu/config/settings-reducer.yaml
     content: |
