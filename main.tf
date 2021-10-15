@@ -15,7 +15,7 @@ provider "openstack" {}
 # ---- Key Pair --------------------------------------------
 resource "openstack_compute_keypair_v2" "keypair" {
   name       = "${var.name-prefix}keypair"
-  public_key = "${file(var.keypair_public-path)}"
+  public_key = file(var.keypair_public-path)
 }
 
 # ---- Security Group --------------------------------------
@@ -33,7 +33,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port22" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 
@@ -46,7 +46,7 @@ resource "openstack_networking_network_v2" "network" {
 
 resource "openstack_networking_subnet_v2" "subnet" {
   name       = "${openstack_networking_network_v2.network.name}-subnet"
-  network_id = "${openstack_networking_network_v2.network.id}"
+  network_id = openstack_networking_network_v2.network.id
   cidr       = "192.168.199.0/24"
   ip_version = 4
 }
@@ -58,14 +58,14 @@ resource "openstack_networking_router_v2" "router" {
 }
 
 resource "openstack_networking_router_interface_v2" "router-interface" {
-  router_id = "${openstack_networking_router_v2.router.id}"
-  subnet_id = "${openstack_networking_subnet_v2.subnet.id}"
+  router_id = openstack_networking_router_v2.router.id
+  subnet_id = openstack_networking_subnet_v2.subnet.id
 }
 
 
 resource "openstack_networking_router_route_v2" "route" {
   depends_on       = [openstack_networking_router_interface_v2.router-interface]
-  router_id        = "${openstack_networking_router_v2.router.id}"
+  router_id        = openstack_networking_router_v2.router.id
   destination_cidr = "10.0.1.0/24"
   next_hop         = "192.168.199.254"
 }
@@ -73,16 +73,16 @@ resource "openstack_networking_router_route_v2" "route" {
 # ---- Modules ---------------------------------------------
 module "combiner" {
   source          = "./modules/combiner"
-  name-prefix     = var.name-prefix  
-  key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
+  name-prefix     = var.name-prefix
+  key_pair        = openstack_compute_keypair_v2.keypair.name
   security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid            = "${openstack_networking_network_v2.network.id}"
+  uuid            = openstack_networking_network_v2.network.id
 }
 module "reducer" {
   source          = "./modules/reducer"
-  name-prefix     = var.name-prefix  
-  key_pair        = "${openstack_compute_keypair_v2.keypair.name}"
+  name-prefix     = var.name-prefix
+  key_pair        = openstack_compute_keypair_v2.keypair.name
   security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid            = "${openstack_networking_network_v2.network.id}"
-  combiner_ips = list("${module.combiner.private-ip}")
+  uuid            = openstack_networking_network_v2.network.id
+  combiner_ips    = tolist(["${module.combiner.private-ip}"])
 }

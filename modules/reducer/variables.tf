@@ -1,24 +1,24 @@
-variable name-prefix {
+variable "name-prefix" {
   description = "Prefix given to resource names"
-  type = string
+  type        = string
 }
 
-variable key_pair {
+variable "key_pair" {
   description = "Key pair to use"
-  type = string
+  type        = string
 }
 
-variable security_groups {
+variable "security_groups" {
   description = "Security groups to attach"
-  type = list(string)
+  type        = list(string)
 }
 
-variable uuid {
+variable "uuid" {
   description = "UUID of network to use"
-  type = string
+  type        = string
 }
 
-variable combiner_ips {
+variable "combiner_ips" {
   description = "List IP addresses of combiners"
-  type = list(string)
+  type        = list(string)
 }

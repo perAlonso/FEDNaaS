@@ -32,7 +32,7 @@ resource "openstack_networking_floatingip_v2" "reducer" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "reducer" {
-  floating_ip = "${openstack_networking_floatingip_v2.reducer.address}"
-  instance_id = "${openstack_compute_instance_v2.reducer.id}"
+  floating_ip = openstack_networking_floatingip_v2.reducer.address
+  instance_id = openstack_compute_instance_v2.reducer.id
 }
-  
+

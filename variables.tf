@@ -1,11 +1,11 @@
 # ---- General ---------------------------------------------
-variable name-prefix {
+variable "name-prefix" {
   description = "Prefix of all resource names"
   type        = string
 }
 
 # ---- Key Pair --------------------------------------------
-variable keypair_public-path {
+variable "keypair_public-path" {
   description = "Path to public SSH key"
   type        = string
 }
