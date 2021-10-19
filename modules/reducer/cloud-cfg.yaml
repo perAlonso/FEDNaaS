@@ -98,6 +98,8 @@ write_files:
       control:
         state: idle
         helper: keras
+        preshared_cert: False
+        discover_host: group4_test_reducer
       statestore:
         type: MongoDB
         mongo_config:
