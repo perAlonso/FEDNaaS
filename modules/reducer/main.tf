@@ -8,21 +8,12 @@ terraform {
   }
 }
 
-# Create combiner instance.
-data "template_file" "reducer_config" {
-  template = file("${path.module}/cloud-cfg.yaml")
-  vars {
-    combiner_ips = var.combiner_ips
-  }
-}
-
 resource "openstack_compute_instance_v2" "reducer" {
   name            = "${var.name-prefix}reducer"
   image_name      = "Ubuntu 20.04 - 2021.03.23"
   flavor_name     = "ssc.xsmall"
   key_pair        = var.key_pair
   security_groups = var.security_groups
-  user_data       = data.template_file.reducer_config.rendered
 
   network {
     uuid = var.uuid

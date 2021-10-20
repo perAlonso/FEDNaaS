@@ -9,17 +9,12 @@ terraform {
 }
 
 # Create combiner instance.
-data "template_file" "combiner_config" {
-  template = file("./modules/combiner/cloud-cfg.yaml")
-}
-
 resource "openstack_compute_instance_v2" "combiner" {
   name            = "${var.name-prefix}combiner"
   image_name      = "Ubuntu 20.04 - 2021.03.23"
   flavor_name     = "ssc.xsmall"
   key_pair        = var.key_pair
   security_groups = var.security_groups
-  user_data       = data.template_file.combiner_config.rendered
 
   network {
     uuid = var.uuid

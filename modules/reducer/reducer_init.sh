@@ -6,8 +6,10 @@ sudo apt install -y docker-compose git-lfs
 cd ~
 
 git clone https://github.com/scaleoutsystems/fedn.git
+cp ~/settings-reducer.yaml ~/fedn/config/
+cp ~/extra-hosts-reducer.yaml ~/fedn/config/
 #COPY TEMPLATED FILES HERE
 cd fedn/
-docker network create fedn_default
-docker-compose -f ./config/base-services.yaml -f ./config/private-network.yaml up -d
-docker-compose -f ./config/reducer.yaml -f ./config/private-network.yaml up -d
+sudo docker network create fedn_default
+sudo -E docker-compose -f ./config/base-services.yaml -f ./config/private-network.yaml up -d
+sudo -E docker-compose -f ./config/reducer.yaml -f ./config/private-network.yaml up -d
