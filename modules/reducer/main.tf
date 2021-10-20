@@ -11,8 +11,8 @@ terraform {
 # Create combiner instance.
 data "template_file" "reducer_config" {
   template = file("${path.module}/cloud-cfg.yaml")
-  vars {
-    combiner_ips = var.combiner_ips
+  vars = {
+    combiner_ips = var.combiner_ips[0]
   }
 }
 

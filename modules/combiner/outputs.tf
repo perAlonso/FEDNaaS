@@ -3,5 +3,5 @@ output "floating-ip" {
 }
 
 output "private-ip" {
-  value = openstack_compute_instance_v2.combiner.network.fixed_ip_v4
+  value = openstack_compute_instance_v2.combiner.network[0].fixed_ip_v4
 }

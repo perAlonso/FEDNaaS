@@ -89,9 +89,7 @@ write_files:
       services:
         reducer:
           extra_hosts:
-            %{ for host in combiner_ips ~}
-            combiner${index(combiner_ips, host)}: ${host}
-            %{ endfor ~}
+            combiner1: ${combiner_ips}
   - path: /home/ubuntu/config/settings-reducer.yaml
     content: |
       network_id: fedn-test-network
