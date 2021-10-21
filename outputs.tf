@@ -8,3 +8,8 @@ output "reducer-fip" {
   value       = module.reducer.floating_ip
 }
 
+output "client-fip" {
+  description = "The floating IP of the client instance"
+  value       = module.client.floating_ip
+}
+

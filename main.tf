@@ -231,6 +231,15 @@ module "reducer" {
   combiner_ips    = ["${module.combiner.private_ip}"]
 }
 
+module "client" {
+  source          = "./modules/client"
+  name-prefix     = var.name-prefix
+  key_pair        = openstack_compute_keypair_v2.keypair.name
+  security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
+  uuid            = openstack_networking_network_v2.network.id
+  combiner_ips    = ["${module.combiner.private_ip}"]
+}
+
 data "template_file" "combiner" {
   template = "${file("./modules/combiner/settings-combiner.yaml")}"
   vars = {
