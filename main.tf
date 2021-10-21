@@ -239,15 +239,15 @@ data "template_file" "combiner" {
 }
 
 resource "null_resource" "combiner" {
-  #  triggers = {
-  #    combiner_id = module.combiner.id
-  #    reducer_id  = module.reducer.id
-  #  }
+  depends_on = [
+    module.combiner,
+    null_resource.reducer
+  ]
 
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("./private/group4-key.pem")}" #file(var.os_ssh_keypair)
+    private_key = "${file("./private/group4-key.pem")}"
     host        =  module.combiner.floating_ip
   }
 
@@ -277,15 +277,14 @@ data "template_file" "reducer_extra_hosts" {
 }
 
 resource "null_resource" "reducer" {
-  #  triggers = {
-  #    combiner_id = module.combiner.id
-  #    reducer_id  = module.reducer.id
-  #  }
+  depends_on = [
+    module.reducer
+  ]
 
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("./private/group4-key.pem")}" #file(var.os_ssh_keypair)
+    private_key = "${file("./private/group4-key.pem")}"
     host        =  module.reducer.floating_ip
   }
 
