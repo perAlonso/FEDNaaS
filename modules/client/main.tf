@@ -10,7 +10,7 @@ terraform {
 
 # Create combiner instance.
 resource "openstack_compute_instance_v2" "client" {
-  name            = "${var.name-prefix}combiner"
+  name            = "${var.name-prefix}client"
   image_name      = "Ubuntu 20.04 - 2021.03.23"
   flavor_name     = "ssc.xsmall"
   key_pair        = var.key_pair
