@@ -239,6 +239,7 @@ module "client" {
   uuid            = openstack_networking_network_v2.network.id
 }
 
+# ---- Combiner Setup --------------------------------------
 data "template_file" "combiner" {
   template = "${file("./modules/combiner/settings-combiner.yaml")}"
   vars = {
@@ -270,6 +271,7 @@ resource "null_resource" "combiner" {
 }
 
 
+# ---- Reducer Setup ---------------------------------------
 data "template_file" "reducer_settings" {
   template = "${file("./modules/reducer/settings-reducer.yaml")}"
   vars = {
@@ -308,5 +310,58 @@ resource "null_resource" "reducer" {
 
   provisioner "remote-exec" {
     script = "./modules/reducer/reducer_init.sh"
+  }
+}
+
+
+# ---- Client Setup ----------------------------------------
+data "template_file" "client_extra_hosts" {
+  template = "${file("./modules/client/extra-hosts-client.yaml")}"
+  vars = {
+    combiner_ip = "${module.combiner.private_ip}"
+    reducer_ip  = "${module.reducer.private_ip}"
+  }
+}
+
+data "template_file" "init_client" {
+  template = "${file("./modules/client/init_client.sh")}"
+  vars = {
+    reducer_ip  = "${module.reducer.private_ip}"
+  }
+}
+
+resource "null_resource" "client" {
+  depends_on = [
+    module.client,
+    null_resource.combiner
+  ]
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = "${file("./private/group4-key.pem")}"
+    host        =  module.client.floating_ip
+  }
+
+  provisioner "file" {
+    content = data.template_file.client_extra_hosts.rendered
+    destination = "/home/ubuntu/extra-hosts-client.yaml"
+  }
+  
+  provisioner "file" {
+    source = "./modules/client/Dockerfile"
+    destination = "/home/ubuntu/Dockerfile"
+  }
+
+  provisioner "file" {
+    content = data.template_file.init_client.rendered
+    destination = "/home/ubuntu/init_client.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x ~/init_client.sh",
+      "~/init_client.sh"
+    ]
   }
 }
