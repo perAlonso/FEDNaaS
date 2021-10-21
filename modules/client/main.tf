@@ -27,7 +27,7 @@ resource "openstack_networking_floatingip_v2" "client" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "client" {
-  floating_ip = openstack_networking_floatingip_v2.combiner.address
-  instance_id = openstack_compute_instance_v2.combiner.id
+  floating_ip = openstack_networking_floatingip_v2.client.address
+  instance_id = openstack_compute_instance_v2.client.id
 }
 
