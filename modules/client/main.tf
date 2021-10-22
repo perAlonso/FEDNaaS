@@ -10,9 +10,9 @@ terraform {
 
 # Create combiner instance.
 resource "openstack_compute_instance_v2" "client" {
-  name            = "${var.name-prefix}client"
-  image_name      = "Ubuntu 20.04 - 2021.03.23"
-  flavor_name     = "ssc.xsmall"
+  name            = "${var.name_prefix}client"
+  image_name      = var.image_name
+  flavor_name     = var.flavor_name
   key_pair        = var.key_pair
   security_groups = var.security_groups
 
@@ -23,7 +23,7 @@ resource "openstack_compute_instance_v2" "client" {
 
 # Associate floating IP to combiner.
 resource "openstack_networking_floatingip_v2" "client" {
-  pool = "Public External IPv4 Network"
+  pool = var.floating_ip_pool
 }
 
 resource "openstack_compute_floatingip_associate_v2" "client" {

@@ -16,4 +16,4 @@ curl -k "https://${reducer_ip}:8090/config/download" > client.yaml
 sudo docker build --network=host . -t mnist-client:latest
 
 sudo -E docker network create fedn_default
-sudo -E docker-compose -f docker-compose.yaml -f private-network.yaml -f extra-hosts.yaml up -d
+sudo -E docker-compose -f docker-compose.yaml -f private-network.yaml -f extra-hosts.yaml up --scale client0=4 -d

@@ -1,4 +1,4 @@
-variable "name-prefix" {
+variable "name_prefix" {
   description = "Prefix given to resource names"
   type        = string
 }
@@ -15,5 +15,20 @@ variable "security_groups" {
 
 variable "uuid" {
   description = "UUID of network to use"
+  type        = string
+}
+
+variable "image_name" {
+  description = "Name of image to use for instance"
+  type        = string
+}
+
+variable "flavor_name" {
+  description = "Name of flavor to use for instance"
+  type        = string
+}
+
+variable "floating_ip_pool" {
+  description = "Pool to get floating IPs from"
   type        = string
 }
