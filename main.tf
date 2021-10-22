@@ -14,15 +14,15 @@ provider "openstack" {}
 
 # ---- Key Pair --------------------------------------------
 resource "openstack_compute_keypair_v2" "keypair" {
-  name       = "${var.name-prefix}keypair"
-  public_key = file(var.keypair_public-path)
+  name       = "${var.name_prefix}keypair"
+  public_key = file(var.key_public_path)
 }
 
 # ---- Security Group --------------------------------------
-# TODO: Add ports as needed by services.
+# TODO: Which are needed, and fix descriptions.
 resource "openstack_networking_secgroup_v2" "secgroup" {
   description = "Open ports required by FEDnaaS"
-  name        = "${var.name-prefix}secgroup"
+  name        = "${var.name_prefix}secgroup"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port22" {
@@ -77,7 +77,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port6534" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port8081" {
@@ -88,7 +88,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port8081" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port8090" {
@@ -99,7 +99,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port8090" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port9000" {
@@ -110,7 +110,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port9000" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port9001" {
@@ -121,7 +121,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port9001" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12080" {
@@ -132,7 +132,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12080" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12081" {
@@ -143,7 +143,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12081" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12082" {
@@ -154,7 +154,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12082" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12083" {
@@ -165,7 +165,7 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12083" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port27017" {
@@ -176,27 +176,27 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port27017" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = "${openstack_networking_secgroup_v2.secgroup.id}"
+  security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
 
 # ---- Network ---------------------------------------------
 resource "openstack_networking_network_v2" "network" {
-  name           = "${var.name-prefix}network"
   description    = "Private network for FEDnaaS"
+  name           = "${var.name_prefix}network"
   admin_state_up = "true"
 }
 
 resource "openstack_networking_subnet_v2" "subnet" {
   name       = "${openstack_networking_network_v2.network.name}-subnet"
   network_id = openstack_networking_network_v2.network.id
-  cidr       = "192.168.199.0/24"
+  cidr       = var.subnet_cidr
   ip_version = 4
 }
 
 resource "openstack_networking_router_v2" "router" {
-  name                = "${var.name-prefix}router"
-  external_network_id = "9187404b-b24b-4ee5-b5f4-22d9a15dc4e2"
+  name                = "${var.name_prefix}router"
+  external_network_id = var.external_network_id
   admin_state_up      = "true"
 }
 
@@ -215,33 +215,41 @@ resource "openstack_networking_router_route_v2" "route" {
 
 # ---- Modules ---------------------------------------------
 module "combiner" {
-  source          = "./modules/combiner"
-  name-prefix     = var.name-prefix
-  key_pair        = openstack_compute_keypair_v2.keypair.name
-  security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid            = openstack_networking_network_v2.network.id
+  source           = "./modules/combiner"
+  name_prefix      = var.name_prefix
+  image_name       = var.combiner_image_name
+  flavor_name      = var.combiner_flavor_name
+  key_pair         = openstack_compute_keypair_v2.keypair.name
+  security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
+  uuid             = openstack_networking_network_v2.network.id
+  floating_ip_pool = var.floating_ip_pool
 }
 
 module "reducer" {
-  source          = "./modules/reducer"
-  name-prefix     = var.name-prefix
-  key_pair        = openstack_compute_keypair_v2.keypair.name
-  security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid            = openstack_networking_network_v2.network.id
-  combiner_ips    = ["${module.combiner.private_ip}"]
+  source           = "./modules/reducer"
+  name_prefix      = var.name_prefix
+  image_name       = var.reducer_image_name
+  flavor_name      = var.reducer_flavor_name
+  key_pair         = openstack_compute_keypair_v2.keypair.name
+  security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
+  uuid             = openstack_networking_network_v2.network.id
+  floating_ip_pool = var.floating_ip_pool
 }
 
 module "client" {
-  source          = "./modules/client"
-  name-prefix     = var.name-prefix
-  key_pair        = openstack_compute_keypair_v2.keypair.name
-  security_groups = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid            = openstack_networking_network_v2.network.id
+  source           = "./modules/client"
+  name_prefix      = var.name_prefix
+  image_name       = var.client_image_name
+  flavor_name      = var.client_flavor_name
+  key_pair         = openstack_compute_keypair_v2.keypair.name
+  security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
+  uuid             = openstack_networking_network_v2.network.id
+  floating_ip_pool = var.floating_ip_pool
 }
 
 # ---- Combiner Setup --------------------------------------
 data "template_file" "combiner" {
-  template = "${file("./modules/combiner/settings-combiner.yaml")}"
+  template = file("./modules/combiner/settings-combiner.yaml")
   vars = {
     reducer_private_ip = "${module.reducer.private_ip}"
   }
@@ -255,14 +263,15 @@ resource "null_resource" "combiner" {
 
   connection {
     type        = "ssh"
-    user        = "ubuntu"
-    private_key = "${file("./private/group4-key.pem")}"
-    host        =  module.combiner.floating_ip
+    user        = var.instance_user
+    private_key = file(var.key_private_path)
+    host        = module.combiner.floating_ip
+    agent       = false
   }
 
   provisioner "file" {
-    content = data.template_file.combiner.rendered
-    destination = "/home/ubuntu/settings-combiner.yaml"
+    content     = data.template_file.combiner.rendered
+    destination = "/home/${var.instance_user}/settings-combiner.yaml"
   }
 
   provisioner "remote-exec" {
@@ -273,14 +282,14 @@ resource "null_resource" "combiner" {
 
 # ---- Reducer Setup ---------------------------------------
 data "template_file" "reducer_settings" {
-  template = "${file("./modules/reducer/settings-reducer.yaml")}"
+  template = file("./modules/reducer/settings-reducer.yaml")
   vars = {
     reducer_private_ip = "${module.reducer.private_ip}"
   }
 }
 
 data "template_file" "reducer_extra_hosts" {
-  template = "${file("./modules/reducer/extra-hosts-reducer.yaml")}"
+  template = file("./modules/reducer/extra-hosts-reducer.yaml")
   vars = {
     combiner_private_ip = "${module.combiner.private_ip}"
   }
@@ -293,19 +302,20 @@ resource "null_resource" "reducer" {
 
   connection {
     type        = "ssh"
-    user        = "ubuntu"
-    private_key = "${file("./private/group4-key.pem")}"
-    host        =  module.reducer.floating_ip
+    user        = var.instance_user
+    private_key = file(var.key_private_path)
+    host        = module.reducer.floating_ip
+    agent       = false
   }
 
   provisioner "file" {
-    content = data.template_file.reducer_settings.rendered
-    destination = "/home/ubuntu/settings-reducer.yaml"
+    content     = data.template_file.reducer_settings.rendered
+    destination = "/home/${var.instance_user}/settings-reducer.yaml"
   }
 
   provisioner "file" {
-    content = data.template_file.reducer_extra_hosts.rendered
-    destination = "/home/ubuntu/extra-hosts-reducer.yaml"
+    content     = data.template_file.reducer_extra_hosts.rendered
+    destination = "/home/${var.instance_user}/extra-hosts-reducer.yaml"
   }
 
   provisioner "remote-exec" {
@@ -316,7 +326,7 @@ resource "null_resource" "reducer" {
 
 # ---- Client Setup ----------------------------------------
 data "template_file" "client_extra_hosts" {
-  template = "${file("./modules/client/extra-hosts-client.yaml")}"
+  template = file("./modules/client/extra-hosts-client.yaml")
   vars = {
     combiner_ip = "${module.combiner.private_ip}"
     reducer_ip  = "${module.reducer.private_ip}"
@@ -324,9 +334,9 @@ data "template_file" "client_extra_hosts" {
 }
 
 data "template_file" "init_client" {
-  template = "${file("./modules/client/init_client.sh")}"
+  template = file("./modules/client/init_client.sh")
   vars = {
-    reducer_ip  = "${module.reducer.private_ip}"
+    reducer_ip = "${module.reducer.private_ip}"
   }
 }
 
@@ -338,24 +348,25 @@ resource "null_resource" "client" {
 
   connection {
     type        = "ssh"
-    user        = "ubuntu"
-    private_key = "${file("./private/group4-key.pem")}"
-    host        =  module.client.floating_ip
+    user        = var.instance_user
+    private_key = file(var.key_private_path)
+    host        = module.client.floating_ip
+    agent       = false
   }
 
   provisioner "file" {
-    content = data.template_file.client_extra_hosts.rendered
-    destination = "/home/ubuntu/extra-hosts-client.yaml"
-  }
-  
-  provisioner "file" {
-    source = "./modules/client/Dockerfile"
-    destination = "/home/ubuntu/Dockerfile"
+    content     = data.template_file.client_extra_hosts.rendered
+    destination = "/home/${var.instance_user}/extra-hosts-client.yaml"
   }
 
   provisioner "file" {
-    content = data.template_file.init_client.rendered
-    destination = "/home/ubuntu/init_client.sh"
+    source      = "./modules/client/Dockerfile"
+    destination = "/home/${var.instance_user}/Dockerfile"
+  }
+
+  provisioner "file" {
+    content     = data.template_file.init_client.rendered
+    destination = "/home/${var.instance_user}/init_client.sh"
   }
 
   provisioner "remote-exec" {
