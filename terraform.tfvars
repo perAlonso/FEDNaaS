@@ -1,6 +1,7 @@
 name_prefix = "group4-"
 
 instance_user = "ubuntu"
+num_clients_per_instance = 4
 
 client_image_name    = "Ubuntu 20.04 - 2021.03.23"
 client_flavor_name   = "ssc.xsmall"

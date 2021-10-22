@@ -72,3 +72,8 @@ variable "floating_ip_pool" {
   description = "Pool to get floating IPs from"
   type        = string
 }
+
+variable "num_clients_per_instance" {
+  description = "Amount of clients to run per instance"
+  type        = number
+}
