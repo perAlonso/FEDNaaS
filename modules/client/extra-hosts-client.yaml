@@ -1,6 +1,6 @@
 version: '3.3'
 services:
-  client0:
+  client:
     extra_hosts:
       combiner: ${combiner_ip}
       reducer: ${reducer_ip}
