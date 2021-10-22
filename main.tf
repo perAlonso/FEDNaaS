@@ -356,6 +356,11 @@ resource "null_resource" "client" {
   }
 
   provisioner "file" {
+    source      = "./modules/client/docker-compose.yaml"
+    destination = "/home/${var.instance_user}/docker-compose.yaml"
+  }
+
+  provisioner "file" {
     content     = data.template_file.client_extra_hosts.rendered
     destination = "/home/${var.instance_user}/extra-hosts-client.yaml"
   }
