@@ -4,7 +4,3 @@ services:
     extra_hosts:
       combiner: ${combiner_ip}
       reducer: ${reducer_ip}
-  client1:
-    extra_hosts:
-      combiner: ${combiner_ip}
-      reducer: ${reducer_ip}
