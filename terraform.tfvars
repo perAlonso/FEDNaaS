@@ -2,13 +2,14 @@ name_prefix = "group4-"
 
 instance_user = "ubuntu"
 num_clients_per_instance = 4
+num_client_instances = 2
 
 client_image_name    = "Ubuntu 20.04 - 2021.03.23"
-client_flavor_name   = "ssc.xsmall"
+client_flavor_name   = "ssc.medium"
 reducer_image_name   = "Ubuntu 20.04 - 2021.03.23"
-reducer_flavor_name  = "ssc.xsmall"
+reducer_flavor_name  = "ssc.medium"
 combiner_image_name  = "Ubuntu 20.04 - 2021.03.23"
-combiner_flavor_name = "ssc.xsmall"
+combiner_flavor_name = "ssc.medium"
 
 key_public_path  = "./private/group4-key.pub"
 key_private_path = "./private/group4-key.pem"

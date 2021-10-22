@@ -237,8 +237,9 @@ module "reducer" {
 }
 
 module "client" {
+  count            = var.num_client_instances
   source           = "./modules/client"
-  name_prefix      = var.name_prefix
+  instance_name    = "${var.name_prefix}client${count.index}"
   image_name       = var.client_image_name
   flavor_name      = var.client_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
@@ -297,7 +298,8 @@ data "template_file" "reducer_extra_hosts" {
 
 resource "null_resource" "reducer" {
   depends_on = [
-    module.reducer
+    module.reducer,
+    openstack_networking_secgroup_rule_v2.rule_port22
   ]
 
   connection {
@@ -347,11 +349,13 @@ resource "null_resource" "client" {
     null_resource.combiner
   ]
 
+  count = var.num_client_instances
+
   connection {
     type        = "ssh"
     user        = var.instance_user
     private_key = file(var.key_private_path)
-    host        = module.client.floating_ip
+    host        = module.client[count.index].floating_ip
     agent       = false
   }
 

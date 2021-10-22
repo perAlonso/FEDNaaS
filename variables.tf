@@ -77,3 +77,8 @@ variable "num_clients_per_instance" {
   description = "Amount of clients to run per instance"
   type        = number
 }
+
+variable "num_client_instances" {
+  description = "Amount of instances to run clients on"
+  type        = number
+}
