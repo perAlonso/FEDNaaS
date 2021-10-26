@@ -300,6 +300,7 @@ resource "null_resource" "client" {
 
   triggers = {
     num_clients = var.num_clients_per_instance
+    flavor      = var.client_flavor_name
   }
 
   count = var.num_client_instances
