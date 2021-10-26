@@ -19,14 +19,12 @@ resource "openstack_compute_keypair_v2" "keypair" {
 }
 
 # ---- Security Group --------------------------------------
-# TODO: Which are needed, and fix descriptions.
 resource "openstack_networking_secgroup_v2" "secgroup" {
   description = "Open ports required by FEDnaaS"
   name        = "${var.name_prefix}secgroup"
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port22" {
-  description       = "Allow SSH access"
   port_range_min    = 22
   port_range_max    = 22
   direction         = "ingress"
@@ -37,7 +35,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port22" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port80" {
-  description       = "Allow SSH access"
   port_range_min    = 80
   port_range_max    = 80
   direction         = "ingress"
@@ -48,7 +45,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port80" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port443" {
-  description       = "Allow SSH access"
   port_range_min    = 443
   port_range_max    = 443
   direction         = "ingress"
@@ -59,7 +55,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port443" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port3546" {
-  description       = "Allow SSH access"
   port_range_min    = 3546
   port_range_max    = 3546
   direction         = "ingress"
@@ -70,7 +65,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port3546" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port6534" {
-  description       = "bleh"
   port_range_min    = 6534
   port_range_max    = 6534
   direction         = "ingress"
@@ -81,7 +75,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port6534" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port8081" {
-  description       = "MongoDB"
   port_range_min    = 8081
   port_range_max    = 8081
   direction         = "ingress"
@@ -92,7 +85,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port8081" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port8090" {
-  description       = "reducer"
   port_range_min    = 8090
   port_range_max    = 8090
   direction         = "ingress"
@@ -103,7 +95,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port8090" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port9000" {
-  description       = "minio"
   port_range_min    = 9000
   port_range_max    = 9000
   direction         = "ingress"
@@ -114,7 +105,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port9000" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port9001" {
-  description       = "minio API"
   port_range_min    = 9001
   port_range_max    = 9001
   direction         = "ingress"
@@ -125,7 +115,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port9001" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12080" {
-  description       = "bleh"
   port_range_min    = 12080
   port_range_max    = 12080
   direction         = "ingress"
@@ -136,7 +125,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12080" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12081" {
-  description       = "bleh"
   port_range_min    = 12081
   port_range_max    = 12081
   direction         = "ingress"
@@ -147,7 +135,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12081" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12082" {
-  description       = "bleh"
   port_range_min    = 12082
   port_range_max    = 12082
   direction         = "ingress"
@@ -158,7 +145,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12082" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port12083" {
-  description       = "bleh"
   port_range_min    = 12083
   port_range_max    = 12083
   direction         = "ingress"
@@ -169,7 +155,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port12083" {
 }
 
 resource "openstack_networking_secgroup_rule_v2" "rule_port27017" {
-  description       = "bleh"
   port_range_min    = 27017
   port_range_max    = 27017
   direction         = "ingress"
@@ -177,40 +162,6 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port27017" {
   protocol          = "tcp"
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
-}
-
-
-# ---- Network ---------------------------------------------
-resource "openstack_networking_network_v2" "network" {
-  description    = "Private network for FEDnaaS"
-  name           = "${var.name_prefix}network"
-  admin_state_up = "true"
-}
-
-resource "openstack_networking_subnet_v2" "subnet" {
-  name       = "${openstack_networking_network_v2.network.name}-subnet"
-  network_id = openstack_networking_network_v2.network.id
-  cidr       = var.subnet_cidr
-  ip_version = 4
-}
-
-resource "openstack_networking_router_v2" "router" {
-  name                = "${var.name_prefix}router"
-  external_network_id = var.external_network_id
-  admin_state_up      = "true"
-}
-
-resource "openstack_networking_router_interface_v2" "router-interface" {
-  router_id = openstack_networking_router_v2.router.id
-  subnet_id = openstack_networking_subnet_v2.subnet.id
-}
-
-
-resource "openstack_networking_router_route_v2" "route" {
-  depends_on       = [openstack_networking_router_interface_v2.router-interface]
-  router_id        = openstack_networking_router_v2.router.id
-  destination_cidr = "10.0.1.0/24"
-  next_hop         = "192.168.199.254"
 }
 
 # ---- Modules ---------------------------------------------
@@ -221,7 +172,7 @@ module "combiner" {
   flavor_name      = var.combiner_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.network_id
   floating_ip_pool = var.floating_ip_pool
 }
 
@@ -232,7 +183,7 @@ module "reducer" {
   flavor_name      = var.reducer_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.network_id
   floating_ip_pool = var.floating_ip_pool
 }
 
@@ -244,7 +195,7 @@ module "client" {
   flavor_name      = var.client_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.network_id
   floating_ip_pool = var.floating_ip_pool
 }
 
@@ -279,7 +230,6 @@ resource "null_resource" "combiner" {
     script = "./modules/combiner/combiner_init.sh"
   }
 }
-
 
 # ---- Reducer Setup ---------------------------------------
 data "template_file" "reducer_settings" {
@@ -324,7 +274,6 @@ resource "null_resource" "reducer" {
     script = "./modules/reducer/reducer_init.sh"
   }
 }
-
 
 # ---- Client Setup ----------------------------------------
 data "template_file" "client_extra_hosts" {

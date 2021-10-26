@@ -8,6 +8,16 @@ variable "instance_user" {
   type        = string
 }
 
+variable "num_clients_per_instance" {
+  description = "Amount of clients to run per instance"
+  type        = number
+}
+
+variable "num_client_instances" {
+  description = "Amount of instances to run clients on"
+  type        = number
+}
+
 variable "client_image_name" {
   description = "Image to use for client instance(s)"
   type        = string
@@ -48,37 +58,12 @@ variable "key_private_path" {
   type        = string
 }
 
-variable "external_network_id" {
-  description = "ID of external network to attach to"
-  type        = string
-}
-
-variable "subnet_cidr" {
-  description = "CIDR to use for subnet"
-  type        = string
-}
-
-variable "router_destination_cidr" {
-  description = "Destination CIDR of router"
-  type        = string
-}
-
-variable "router_next_hop" {
-  description = "Next hop of router"
+variable "network_id" {
+  description = "ID of network to attach instances to"
   type        = string
 }
 
 variable "floating_ip_pool" {
   description = "Pool to get floating IPs from"
   type        = string
-}
-
-variable "num_clients_per_instance" {
-  description = "Amount of clients to run per instance"
-  type        = number
-}
-
-variable "num_client_instances" {
-  description = "Amount of instances to run clients on"
-  type        = number
 }
