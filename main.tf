@@ -213,6 +213,10 @@ resource "null_resource" "combiner" {
     null_resource.reducer
   ]
 
+  triggers = {
+    flavor = var.combiner_flavor_name
+  }
+
   connection {
     type        = "ssh"
     user        = var.instance_user
@@ -251,6 +255,10 @@ resource "null_resource" "reducer" {
     module.reducer,
     openstack_networking_secgroup_rule_v2.rule_port22
   ]
+
+  triggers = {
+    flavor = var.reducer_flavor_name
+  }
 
   connection {
     type        = "ssh"
