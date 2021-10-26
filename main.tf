@@ -298,6 +298,10 @@ resource "null_resource" "client" {
     null_resource.combiner
   ]
 
+  triggers = {
+    num_clients = var.num_clients_per_instance
+  }
+
   count = var.num_client_instances
 
   connection {
