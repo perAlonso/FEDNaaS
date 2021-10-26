@@ -287,7 +287,7 @@ data "template_file" "client_extra_hosts" {
 data "template_file" "init_client" {
   template = file("./modules/client/init_client.sh")
   vars = {
-    reducer_ip = "${module.reducer.private_ip}"
+    reducer_ip               = "${module.reducer.private_ip}"
     num_clients_per_instance = var.num_clients_per_instance
   }
 }
