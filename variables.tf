@@ -53,6 +53,11 @@ variable "external_network_id" {
   type        = string
 }
 
+variable "internal_network_id" {
+  description = "ID of the internal network to attach instances to"
+  type        = string
+}
+
 variable "subnet_cidr" {
   description = "CIDR to use for subnet"
   type        = string

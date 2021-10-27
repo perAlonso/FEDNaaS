@@ -32,3 +32,8 @@ variable "floating_ip_pool" {
   description = "Pool to get floating IPs from"
   type        = string
 }
+
+variable "pub_key" {
+  description = "Public key as a path"
+  type = string
+}

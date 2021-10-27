@@ -8,6 +8,13 @@ terraform {
   }
 }
 
+data "template_file" "cloud_config" {
+  template = "${file("${path.module}/cloud-cfg-ssh.yaml")}"
+    
+  vars = {
+    pubkey = "${var.pub_key}"
+  }
+}
 # Create combiner instance.
 resource "openstack_compute_instance_v2" "combiner" {
   name            = "${var.name_prefix}combiner"
@@ -15,6 +22,9 @@ resource "openstack_compute_instance_v2" "combiner" {
   flavor_name     = var.flavor_name
   key_pair        = var.key_pair
   security_groups = var.security_groups
+
+  
+  user_data = data.template_file.cloud_config.rendered
 
   network {
     uuid = var.uuid

@@ -181,37 +181,37 @@ resource "openstack_networking_secgroup_rule_v2" "rule_port27017" {
 
 
 # ---- Network ---------------------------------------------
-resource "openstack_networking_network_v2" "network" {
-  description    = "Private network for FEDnaaS"
-  name           = "${var.name_prefix}network"
-  admin_state_up = "true"
-}
-
-resource "openstack_networking_subnet_v2" "subnet" {
-  name       = "${openstack_networking_network_v2.network.name}-subnet"
-  network_id = openstack_networking_network_v2.network.id
-  cidr       = var.subnet_cidr
-  ip_version = 4
-}
-
-resource "openstack_networking_router_v2" "router" {
-  name                = "${var.name_prefix}router"
-  external_network_id = var.external_network_id
-  admin_state_up      = "true"
-}
-
-resource "openstack_networking_router_interface_v2" "router-interface" {
-  router_id = openstack_networking_router_v2.router.id
-  subnet_id = openstack_networking_subnet_v2.subnet.id
-}
-
-
-resource "openstack_networking_router_route_v2" "route" {
-  depends_on       = [openstack_networking_router_interface_v2.router-interface]
-  router_id        = openstack_networking_router_v2.router.id
-  destination_cidr = "10.0.1.0/24"
-  next_hop         = "192.168.199.254"
-}
+#resource "openstack_networking_network_v2" "network" {
+#  description    = "Private network for FEDnaaS"
+#  name           = "${var.name_prefix}network"
+#  admin_state_up = "true"
+#}
+#
+#resource "openstack_networking_subnet_v2" "subnet" {
+#  name       = "${openstack_networking_network_v2.network.name}-subnet"
+#  network_id = openstack_networking_network_v2.network.id
+#  cidr       = var.subnet_cidr
+#  ip_version = 4
+#}
+#
+#resource "openstack_networking_router_v2" "router" {
+#  name                = "${var.name_prefix}router"
+#  external_network_id = var.external_network_id
+#  admin_state_up      = "true"
+#}
+#
+#resource "openstack_networking_router_interface_v2" "router-interface" {
+#  router_id = openstack_networking_router_v2.router.id
+#  subnet_id = openstack_networking_subnet_v2.subnet.id
+#}
+#
+#
+#resource "openstack_networking_router_route_v2" "route" {
+#  depends_on       = [openstack_networking_router_interface_v2.router-interface]
+#  router_id        = openstack_networking_router_v2.router.id
+#  destination_cidr = "10.0.1.0/24"
+#  next_hop         = "192.168.198.254"
+#}
 
 # ---- Modules ---------------------------------------------
 module "combiner" {
@@ -221,8 +221,9 @@ module "combiner" {
   flavor_name      = var.combiner_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.internal_network_id
   floating_ip_pool = var.floating_ip_pool
+  pub_key = trim(openstack_compute_keypair_v2.keypair.public_key, "\n")
 }
 
 module "reducer" {
@@ -232,8 +233,9 @@ module "reducer" {
   flavor_name      = var.reducer_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.internal_network_id
   floating_ip_pool = var.floating_ip_pool
+  pub_key = trim(openstack_compute_keypair_v2.keypair.public_key, "\n")
 }
 
 module "client" {
@@ -244,8 +246,9 @@ module "client" {
   flavor_name      = var.client_flavor_name
   key_pair         = openstack_compute_keypair_v2.keypair.name
   security_groups  = ["${openstack_networking_secgroup_v2.secgroup.name}"]
-  uuid             = openstack_networking_network_v2.network.id
+  uuid             = var.internal_network_id
   floating_ip_pool = var.floating_ip_pool
+  pub_key = trim(openstack_compute_keypair_v2.keypair.public_key, "\n")
 }
 
 # ---- Combiner Setup --------------------------------------
