@@ -1,5 +1,5 @@
 # FEDn-as-a-Service
-A Terraform-based solition for deploying [FEDn](https://github.com/scaleoutsystems/fedn) to an OpenStack cloud.
+A Terraform-based solution for deploying [FEDn](https://github.com/scaleoutsystems/fedn) to an OpenStack cloud.
 
 ## Instructions
 1. If needed, generate an SSH key pair to be used.
