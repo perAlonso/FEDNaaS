@@ -16,4 +16,4 @@ terraform destroy
 ```
 
 ## Scaling
-Scaling is achieved by editing the `num_clients_per_instance` and `num_client_instances` variables, varying the amount of clients to deploy. This can be done before and after the service has been deployed.
+Horizontal scaling is achieved by editing the `num_clients_per_instance` and `num_client_instances` variables, varying the amount of clients to deploy. Vertical scaling is achieved by editing the `<instance>_flavor_name` variable(s), altering the flavor used by the instance(s). This can be done before and after the service has been deployed.
